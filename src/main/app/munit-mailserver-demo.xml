@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:context="http://www.springframework.org/schema/context" xmlns:smtp="http://www.mulesoft.org/schema/mule/smtp" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:spring="http://www.springframework.org/schema/beans" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/smtp http://www.mulesoft.org/schema/mule/smtp/current/mule-smtp.xsd">
+
+	<context:property-placeholder location="munit-mailserver-demo.properties" />
+
+    <sub-flow name="subflow-mail-sender">
+        <set-variable variableName="emailSubject" value="#['Welcome to UT']" doc:name="Set Subject"/>
+        <smtp:outbound-endpoint host="${email.host}" port="${email.port}" to="${email.to.addr}" subject="#[flowVars.emailSubject]" cc="${email.cc.addr}" responseTimeout="10000" doc:name="SMTP" password="${email.password}" user="${email.user}"/>
+    </sub-flow>
+    
+    <sub-flow name="subflow-attachment-mail-sender">
+        <set-variable variableName="emailSubject" value="#['Welcome to UT']" doc:name="Set Subject"/>
+        <set-attachment attachmentName="test.txt" value="#[payload]" contentType="text/plain" doc:name="Attachment" />
+        <smtp:outbound-endpoint host="${email.host}" port="${email.port}" to="${email.to.addr}" subject="#[flowVars.emailSubject]" cc="${email.cc.addr}" responseTimeout="10000" doc:name="SMTP" password="${email.password}" user="${email.user}"/>
+    </sub-flow>
+    
+</mule>
